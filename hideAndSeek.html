@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hide and Seek</title>
+
+    <style>
+        span {
+            width: 25px;
+            height: 25px;
+            border: 1px solid black;
+            background-color: fuchsia;
+            display: inline-block;
+        }
+
+        .rabbit {
+            background-color: yellow;
+        }
+
+        .rabbitDoom {
+            background-color: firebrick;
+        }
+    </style>
+</head>
+<body>
+    Rabbits Hidden: <input type="text" id="hidden"> Found: <input type="text" id="found">
+
+    <br/>
+
+    <button>Seek</button>
+
+    <br/>
+
+    <p></p>
+
+    <br/>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+
+<script>
+    $(init);
+
+    function init() {
+        var squareCounter = 1;
+
+        // Make many rows
+        for (var row = 1; row <= 9; row++) {
+
+            // Make a row of squares
+            for (var col = 1; col <= 9; col++) {
+
+                // Make a square
+                var newSpan = $("<span>");
+                //newSpan.text(squareCounter);
+                newSpan.attr("id", squareCounter);
+                squareCounter++;
+
+                $("body").append(newSpan);
+
+            }
+
+            $("body").append("<br>");
+
+        }
+
+        $("span").click(hideRabbit);
+        $("button").click(seek);
+
+    }
+
+
+    function seek() {
+        var searchCounter = 0;
+
+        // how many rabbits do we have to find?
+        var currentRabbits = parseInt( $("#hidden").val() );
+
+        while (currentRabbits > 0) {
+            do {
+                // pick a random square
+                var randomSquare = Math.floor(Math.random() * 81) + 1;
+                var theSpan = $("#" + randomSquare);
+            } while (theSpan.hasClass("fox"));
+
+            theSpan.fadeTo("slow", .3).delay(800).fadeTo("slow", 1.0);
+            setTimeout(function(){console.log("timeout")}, 800);
+            console.log("loop")
+
+            theSpan.addClass("fox");
+
+            // If there is a rabbit here
+            if (theSpan.hasClass("rabbit")) {
+                // Subtract from rabbits left to find
+                currentRabbits--;
+                // Update hidden rabbits box
+                $("#hidden").val(currentRabbits);
+
+                // Add to rabbits found
+                var foundRabbits = $("#found").val();
+                foundRabbits++;
+                // Update found rabbits box
+                $("#found").val(foundRabbits);
+
+                // turn the square red
+                theSpan.addClass("rabbitDoom");
+            } else {
+                // Put an x in the square
+                theSpan.text("X");
+            }
+
+            searchCounter++;
+        }
+
+        $("p").text("It took " + searchCounter + " searches");
+
+    }
+
+
+    function hideRabbit() {
+
+        // if there isn't already a rabbit here
+        if (!$(this).hasClass("rabbit")) {
+
+            // add one to hidden rabbits
+            var currentRabbits = $("#hidden").val();
+            currentRabbits++;
+            $("#hidden").val(currentRabbits);
+
+            // give this span the rabbit class
+            $(this).addClass("rabbit");
+        }
+
+
+    }
+
+</script>
+</html>
