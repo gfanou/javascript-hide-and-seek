@@ -20,20 +20,39 @@
         .rabbitDoom {
             background-color: firebrick;
         }
+
+        #myGrid {
+            display: inline-grid;
+            grid-template-columns: auto auto;
+            grid-gap: 10px;
+        }
     </style>
 </head>
 <body>
-    Rabbits Hidden: <input type="text" id="hidden"> Found: <input type="text" id="found">
 
-    <br/>
+<div id="myGrid">
 
-    <button>Seek</button>
+    <label for="hidden">
+        Rabbits Hidden
+    </label>
+    <input type="text" id="hidden" value="0">
 
-    <br/>
+    <label for="found">
+        Rabbits Found
+    </label>
+    <input type="text" id="found" value="0">
 
-    <p></p>
+</div>
+<br/>
 
-    <br/>
+<button>Seek</button>
+
+<br/>
+
+<p></p>
+
+<div id="gameBoard"></div>
+
 </body>
 
 <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
@@ -52,15 +71,24 @@
 
                 // Make a square
                 var newSpan = $("<span>");
-                //newSpan.text(squareCounter);
+
+                // Add a non-breaking space as its text
+                newSpan.html("&nbsp;");
+
+                // Give it an ID of 1 through 81
                 newSpan.attr("id", squareCounter);
+
+                // Add one to the counter
                 squareCounter++;
 
-                $("body").append(newSpan);
+                // Append it as the last child of the
+                // div with ID "gameBoard"
+                $("#gameBoard").append(newSpan);
 
             }
 
-            $("body").append("<br>");
+            // Add a break tag to end the row
+            $("#gameBoard").append("<br>");
 
         }
 
@@ -70,11 +98,15 @@
     }
 
 
+    /**
+     * This function runs when the player is done hiding
+     * rabbits and clicks the "Seek" button
+     */
     function seek() {
         var searchCounter = 0;
 
         // how many rabbits do we have to find?
-        var currentRabbits = parseInt( $("#hidden").val() );
+        var currentRabbits = parseInt($("#hidden").val());
 
         while (currentRabbits > 0) {
             do {
@@ -83,51 +115,65 @@
                 var theSpan = $("#" + randomSquare);
             } while (theSpan.hasClass("fox"));
 
-            theSpan.fadeTo("slow", .3).delay(800).fadeTo("slow", 1.0);
-            setTimeout(function(){console.log("timeout")}, 800);
-            console.log("loop")
-
             theSpan.addClass("fox");
 
-            // If there is a rabbit here
+            // If there is a rabbit here...
             if (theSpan.hasClass("rabbit")) {
+
                 // Subtract from rabbits left to find
                 currentRabbits--;
-                // Update hidden rabbits box
+
+                // Update "hidden rabbits" box
                 $("#hidden").val(currentRabbits);
 
                 // Add to rabbits found
                 var foundRabbits = $("#found").val();
                 foundRabbits++;
-                // Update found rabbits box
+
+                // Update the "found rabbits" box
                 $("#found").val(foundRabbits);
 
                 // turn the square red
                 theSpan.addClass("rabbitDoom");
+
             } else {
-                // Put an x in the square
+                // There is not a rabbit here
+
+                // Put an x in the square to show
+                // the fox searched and found nothing
                 theSpan.text("X");
             }
 
+            // Increment the total number of searches
             searchCounter++;
+
         }
 
-        $("p").text("It took " + searchCounter + " searches");
+        $("p").text("It took the fox " + searchCounter + " searches to find all the rabbits!");
 
     }
 
 
+    /**
+     * This function runs when the player clicks on a span
+     * to hide a rabbit.
+     */
     function hideRabbit() {
 
         // if there isn't already a rabbit here
         if (!$(this).hasClass("rabbit")) {
 
-            // add one to hidden rabbits
+            // add one to hidden rabbits by getting
+            // the value from the text box...
             var currentRabbits = $("#hidden").val();
+
+            // ...adding 1...
             currentRabbits++;
+
+            // ... and putting the new value back in the box
             $("#hidden").val(currentRabbits);
 
-            // give this span the rabbit class
+            // give this span the "rabbit" class
             $(this).addClass("rabbit");
         }
 
