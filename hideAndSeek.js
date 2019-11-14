@@ -1,0 +1,137 @@
+$(init);
+
+function init() {
+    var squareCounter = 1;
+
+    // Make many rows
+    for (var row = 1; row <= 9; row++) {
+
+        // Make a row of squares
+        for (var col = 1; col <= 9; col++) {
+
+            // Make a square
+            var newSpan = $("<span>");
+
+            // Add a non-breaking space as its text
+            newSpan.html("&nbsp;");
+
+            // Give it an ID of 1 through 81
+            newSpan.attr("id", squareCounter);
+
+            // 50/50 chance of getting bush1 or bush2
+            // style
+            var random = Math.random();
+            if (random < .5) {
+                newSpan.addClass("bush1");
+            } else {
+                newSpan.addClass("bush2");
+            }
+
+
+            // Add one to the counter
+            squareCounter++;
+
+            // Append it as the last child of the
+            // div with ID "gameBoard"
+            $("#gameBoard").append(newSpan);
+
+        }
+
+        // Add a break tag to end the row
+        $("#gameBoard").append("<br>");
+
+    }
+
+    $("span").click(hideRabbit);
+    $("button").click(seek);
+
+}
+
+
+/**
+ * This function runs when the player is done hiding
+ * rabbits and clicks the "Seek" button
+ */
+function seek() {
+    // Remove the rabbit visible class so you
+    // can't tell where you hid the rabbits
+    $("span").removeClass("rabbitVisible");
+
+    var searchCounter = 0;
+
+    // how many rabbits do we have to find?
+    var currentRabbits = parseInt($("#hidden").val());
+
+    while (currentRabbits > 0) {
+        do {
+            // pick a random square
+            var randomSquare = Math.floor(Math.random() * 81) + 1;
+            var theSpan = $("#" + randomSquare);
+        } while (theSpan.hasClass("fox"));
+
+        theSpan.addClass("fox");
+
+        // If there is a rabbit here...
+        if (theSpan.hasClass("rabbit")) {
+
+            // Subtract from rabbits left to find
+            currentRabbits--;
+
+            // Update "hidden rabbits" box
+            $("#hidden").val(currentRabbits);
+
+            // Add to rabbits found
+            var foundRabbits = $("#found").val();
+            foundRabbits++;
+
+            // Update the "found rabbits" box
+            $("#found").val(foundRabbits);
+
+            // turn the square red
+            theSpan.addClass("rabbitDoom");
+
+        } else {
+            // There is not a rabbit here
+
+            // Put an x in the square to show
+            // the fox searched and found nothing
+            // theSpan.text("X");
+        }
+
+        // Increment the total number of searches
+        searchCounter++;
+
+    }
+
+    $("p").text("It took the fox " + searchCounter + " searches to find all the rabbits!");
+
+}
+
+
+/**
+ * This function runs when the player clicks on a span
+ * to hide a rabbit.
+ */
+function hideRabbit() {
+
+    // if there isn't already a rabbit here
+    if (!$(this).hasClass("rabbit")) {
+
+        // add one to hidden rabbits by getting
+        // the value from the text box...
+        var currentRabbits = $("#hidden").val();
+
+        // ...adding 1...
+        currentRabbits++;
+
+        // ... and putting the new value back in the box
+        $("#hidden").val(currentRabbits);
+
+        // give this span the "rabbit" class as a marker
+        // and the "rabbitVisible" class for the background
+        // image
+        $(this).addClass("rabbit").addClass("rabbitVisible");
+    }
+
+
+}

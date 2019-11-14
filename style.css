@@ -1,0 +1,33 @@
+span {
+    width: 25px;
+    height: 25px;
+    border: 1px solid black;
+    background-color: forestgreen;
+    display: inline-block;
+}
+
+.bush1 {
+    background-image: url("img/bush1.png");
+}
+
+.bush2 {
+    background-image: url("img/bush2.png");
+}
+
+.fox {
+    background-image: url("img/fox.png");
+}
+
+.rabbitVisible {
+    background-image: url("img/rabbit.png");
+}
+
+.rabbitDoom {
+    background-color: firebrick;
+}
+
+#myGrid {
+    display: inline-grid;
+    grid-template-columns: auto auto;
+    grid-gap: 10px;
+}
