@@ -1,9 +1,16 @@
 body {
     font-family: 'Nunito', sans-serif;
     font-size: large;
+    text-align:center;
+    background-color: darkseagreen;
 }
 
-span {
+button {
+    background-color: black;
+    color: whitesmoke;
+}
+
+.hidingSpot {
     width: 100px;
     height: 100px;
     border: 1px solid black;
@@ -33,6 +40,6 @@ span {
 
 #myGrid {
     display: inline-grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: auto auto auto;
     grid-gap: 10px;
 }
