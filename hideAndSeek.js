@@ -37,7 +37,7 @@ function init() {
  */
 function seek() {
     // Disable randomize button
-    $("#randomizeButton").prop("disabled", true);
+    //$("#randomizeButton").prop("disabled", true);
 
     // Remove the rabbit visible class so you
     // can't tell where you hid the rabbits
@@ -127,7 +127,7 @@ function seekWithInterval() {
  */
 function randomlyHideRabbits() {
     // Disable the seek button until all rabbits are hidden
-    $("#seekButton").prop("disabled", true);
+    //$("#seekButton").prop("disabled", true);
 
     // How many rabbits should be randomly hidden, minimum of 1
     rabbitsToHide = Math.floor(Math.random() * (ROWS * COLS) / 2) + 1;
@@ -152,7 +152,7 @@ function clickRandomSpan() {
         setTimeout(clickRandomSpan, 100);
     } else {
         // Enable the seek button
-        $("#seekButton").removeProp("disabled");
+        //$("#seekButton").removeProp("disabled");
     }
 }
 
@@ -210,52 +210,53 @@ function testHidingPlace(theSpan) {
         $("p").text("It took the fox " + searchCounter + " searches to find all the rabbits!");
     }
 
+}
 
-    /**
-     * Initializes the game board on page load
-     */
-    function createGameBoard() {
-        var squareCounter = 1;
 
-        // Make many rows
-        for (var row = 1; row <= ROWS; row++) {
+/**
+ * Initializes the game board on page load
+ */
+function createGameBoard() {
+    var squareCounter = 1;
 
-            // Make a row of squares
-            for (var col = 1; col <= COLS; col++) {
+    // Make many rows
+    for (var row = 1; row <= ROWS; row++) {
 
-                // Make a square
-                var newSpan = $("<span>");
+        // Make a row of squares
+        for (var col = 1; col <= COLS; col++) {
 
-                // Add a non-breaking space as its text
-                newSpan.html("&nbsp;");
+            // Make a square
+            var newSpan = $("<span>");
 
-                // Give it an ID of 1 through 81
-                newSpan.attr("id", squareCounter);
+            // Add a non-breaking space as its text
+            newSpan.html("&nbsp;");
 
-                // Give it a class of "hidingSpot"
-                newSpan.addClass("hidingSpot");
+            // Give it an ID of 1 through 81
+            newSpan.attr("id", squareCounter);
 
-                // 50/50 chance of getting bush1 or bush2
-                // style
-                var random = Math.random();
-                if (random < .5) {
-                    newSpan.addClass("bush1");
-                } else {
-                    newSpan.addClass("bush2");
-                }
+            // Give it a class of "hidingSpot"
+            newSpan.addClass("hidingSpot");
 
-                // Add one to the counter
-                squareCounter++;
-
-                // Append it as the last child of the
-                // div with ID "gameBoard"
-                $("#gameBoard").append(newSpan);
-
+            // 50/50 chance of getting bush1 or bush2
+            // style
+            var random = Math.random();
+            if (random < .5) {
+                newSpan.addClass("bush1");
+            } else {
+                newSpan.addClass("bush2");
             }
 
-            // Add a break tag to end the row
-            $("#gameBoard").append("<br>");
+            // Add one to the counter
+            squareCounter++;
+
+            // Append it as the last child of the
+            // div with ID "gameBoard"
+            $("#gameBoard").append(newSpan);
 
         }
+
+        // Add a break tag to end the row
+        $("#gameBoard").append("<br>");
+
     }
 }
