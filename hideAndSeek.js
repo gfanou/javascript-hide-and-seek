@@ -22,65 +22,17 @@ var searchInterval;
 
 
 function init() {
+    // Generate HTML for the board
     createGameBoard();
 
+    // Make all game board squares clickable
     $(".hidingSpot").click(hideRabbit);
+    // Add function to the Randomize button
     $("#randomizeButton").click(randomlyHideRabbits);
+    // Add function to the Seek button
     $("#seekButton").click(seekWithInterval);
 
 }
-
-
-/**
- * This function runs when the player is done hiding
- * rabbits and clicks the "Seek" button
- */
-function seek() {
-    // Disable randomize button
-    //$("#randomizeButton").prop("disabled", true);
-
-    // Remove the rabbit visible class so you
-    // can't tell where you hid the rabbits
-    $(".hidingSpot").removeClass("rabbitVisible");
-
-    while (hiddenRabbits > 0) {
-        do {
-            // pick a random square
-            var randomSquare = Math.floor(Math.random() * 81) + 1;
-            var theSpan = $("#" + randomSquare);
-        } while (theSpan.hasClass("fox"));
-
-        theSpan.addClass("fox");
-
-        // If there is a rabbit here...
-        if (theSpan.hasClass("rabbit")) {
-
-            // Subtract from rabbits left to find
-            hiddenRabbits--;
-
-            // Update "hidden rabbits" box
-            $("#hidden").val(hiddenRabbits);
-
-            // Add to rabbits found
-            foundRabbits++;
-
-            // Update the "found rabbits" box
-            $("#found").val(foundRabbits);
-
-            // turn the square red
-            theSpan.addClass("rabbitDoom");
-
-        }
-
-        // Increment the total number of searches
-        searchCounter++;
-
-    }
-
-    $("p").text("It took the fox " + searchCounter + " searches to find all the rabbits!");
-
-}
-
 
 /**
  * This function runs when the player clicks on a span
@@ -94,7 +46,7 @@ function hideRabbit() {
         // add one to hidden rabbits
         hiddenRabbits++;
 
-        // ... and putting the new value back in the box
+        // ... and put the new value in the input box
         $("#hidden").val(hiddenRabbits);
 
         // give this span the "rabbit" class as a marker
@@ -108,14 +60,15 @@ function hideRabbit() {
 /**
  * This function runs when the player is done hiding
  * rabbits and clicks the "Seek" button
+ *
+ * It kicks off the search process by starting an
+ * interval that repeatedly runs the foxSearch()
+ * function
  */
 function seekWithInterval() {
-    // Remove the rabbit visible class so you
+    // Remove the rabbitVisible class so you
     // can't tell where you hid the rabbits
     $(".hidingSpot").removeClass("rabbitVisible");
-
-    // how many rabbits do we have to find?
-    hiddenRabbits = parseInt($("#hidden").val());
 
     // Start an interval to make the fox search
     searchInterval = setInterval(foxSearch, FADE_MILLS * 5);
@@ -127,9 +80,11 @@ function seekWithInterval() {
  */
 function randomlyHideRabbits() {
     // Disable the seek button until all rabbits are hidden
+    // Doesn't seem to be working, though, so commented out
     //$("#seekButton").prop("disabled", true);
 
-    // How many rabbits should be randomly hidden, minimum of 1
+    // How many rabbits should be randomly hidden, minimum of 1,
+    // maximum of half the available hiding spots
     rabbitsToHide = Math.floor(Math.random() * (ROWS * COLS) / 2) + 1;
 
     // Hide the first rabbit. The clickRandomSpan() function will call itself if more rabbits need
@@ -140,9 +95,10 @@ function randomlyHideRabbits() {
 
 function clickRandomSpan() {
     // Choose a random valid span id
-    var randomSpanId = "#" + Math.floor(Math.random() * ROWS * COLS);
+    var randomSpanId = getRandomSquareId();
 
-    // Programmatically click it
+    // Programmatically click the span, which will call the hideRabbit()
+    // function just as if the player had clicked it
     $(randomSpanId).click();
 
     // If we are randomly hiding rabbits and there are still more rabbits
@@ -152,6 +108,7 @@ function clickRandomSpan() {
         setTimeout(clickRandomSpan, 100);
     } else {
         // Enable the seek button
+        // Commented out because button enabling/disabling isn't working right
         //$("#seekButton").removeProp("disabled");
     }
 }
@@ -161,10 +118,14 @@ function clickRandomSpan() {
  * Invoked by the interval every X milliseconds to perform the fox's search action
  */
 function foxSearch() {
+    // To prevent the fox from searching where
+    // he's already been, randomly pick a square
+    // until one is found without the "fox" class
     do {
-        // pick a random square
-        var randomSquare = Math.floor(Math.random() * 81) + 1;
-        var theSpan = $("#" + randomSquare);
+        // This function returns a random ID (like "#42")
+        var randomSquareId = getRandomSquareId();
+        // Select the span using its ID
+        var theSpan = $(randomSquareId);
     } while (theSpan.hasClass("fox"));
 
     // Put the fox graphic in the span
@@ -172,7 +133,7 @@ function foxSearch() {
 
     // Fade the span to half transparency twice, then reveal the result of the search
     theSpan.fadeTo(FADE_MILLS, .5).fadeTo(FADE_MILLS, 1).fadeTo(FADE_MILLS, .5).fadeTo(FADE_MILLS, 1, 0, setTimeout(function () {
-        testHidingPlace(theSpan)
+        testHidingPlace(theSpan);
     }, FADE_MILLS * 4));
 }
 
@@ -202,6 +163,7 @@ function testHidingPlace(theSpan) {
     // Increment the total number of searches
     searchCounter++;
 
+    // If all the rabbits are found
     if (hiddenRabbits == 0) {
         // Stop running the search function
         clearInterval(searchInterval);
@@ -259,4 +221,13 @@ function createGameBoard() {
         $("#gameBoard").append("<br>");
 
     }
+}
+
+/**
+ * This utility function picks a number between 1 and the
+ * biggest square ID, then concatenates the chosen number
+ * with the "#" symbol to form a jQuery ID selector
+ */
+function getRandomSquareId() {
+    return "#" + (Math.floor(Math.random() * (ROWS * COLS)) + 1);
 }
